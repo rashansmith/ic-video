@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "ic_video_optimize": {
+      "main": "src/ic_video_optimize/main.mo",
+      "type": "motoko"
+    },
+    "ic_video_optimize_assets": {
+      "dependencies": [
+        "ic_video_optimize"
+      ],
+      "frontend": {
+        "entrypoint": "src/ic_video_optimize_assets/src/index.html"
+      },
+      "source": [
+        "src/ic_video_optimize_assets/assets",
+        "dist/ic_video_optimize_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.8.4",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}
