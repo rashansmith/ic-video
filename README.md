@@ -21,15 +21,18 @@ To learn more before you start working with IC Video, see the following document
 
 #### What is WebRTC
 Web RealTime Communication is a browser technology for users for communicate with each other in real time. 
-The PeerJs https://peerjs.com/docs.html library is used in this project to make working with WebRTC a bit simpler. 
 
 
 
 #### Instructions to run project on your machine
-In one terminal/shell, run ```dfx start``` to start the local Internet Computer Network
+
+Step 1:
+In one terminal/shell, run ```dfx start --background clean``` to start the local Internet Computer Network
+
+Step 2: 
 
 In another terminal/shell, run 
-- Step 1: 
+- ```npm install ```
 - Option A: 
     - ```dfx canister create --all``` - Register unique canister identifiers in the project
     - ```dfx build``` - Build the executable canister
@@ -37,11 +40,14 @@ In another terminal/shell, run
      network
     - ```dfx canister install --all --mode reinstall``` if you are running it again
 - Option B: 
-    - ```dfx deploy``` - which handles the three previous steps
+    - ```dfx deploy``` - which handles the three previous steps   
 
-Step 2:
-- ```run npm install``` - Make sure modules are available in your project directory
-- ```npm run start``` - Launches the frontend on localhost:8080
+- Take note of the canisterId from the logs, as this will be the address for the website
+
+Step 3:
+- View the app in your browser at ``` http://localhost:8000/?canisterId=<your_canister_id> ``` 
+
+- The canisterId can be found in the terminal logs of the commands from Step 2
 
 
 #### Helpful Resources

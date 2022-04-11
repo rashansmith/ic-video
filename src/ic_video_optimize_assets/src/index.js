@@ -9,7 +9,6 @@ import {
 } from "../../declarations/ic_video_optimize";
 
 
-
 // Setting up interaction with Principal
 function newIdentity() {
   const entropy = crypto.getRandomValues(new Uint8Array(32));
@@ -80,7 +79,6 @@ var welcomeVideo = document.getElementById("welcome")
 var getStarted = document.getElementById("getStarted")
 var width = 100
 var height = 100
-//var foundAnswer = 0
 var foundOffer = 0
 var sentOffer = 0
 let poll
@@ -98,15 +96,7 @@ const iceServers = { iceServers: [
 
 // Event listeners for the buttons create, join and leave room
 document.addEventListener("DOMContentLoaded", function(event) {
-  // leaveRoomButton.disabled = true;
   controlBar.style.display = "none";
-  // welcomeVideo.style.display = "none"
-
-
-  // getStarted.addEventListener("click", e => {
-  //   welcomePage.style.display = "none";
-  //   welcomeVideo.style.display = "block"
-  // })
 
   // Create a room listener
   createRoomButton.addEventListener("click", e => {
@@ -118,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
       currentRoomId = room
       console.log("Just created a room: " + room)
       creator = true
-
       const node = document.createElement("p");
       const textnode = document.createTextNode("Room Id: " + room);
       node.appendChild(textnode);
@@ -146,19 +135,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
         alert("Room does not exist")
         return
       } else {
-        //ic_vid.joinRoom(parseInt(currentRoomId), user_id).then(result => {
-        //  console.log("Trying to join room:" + currentRoomId + " " + result)
-          setupLocalRoomOnCreate(() => {
-            console.log("setup local complete")
-            loadingSpinner.style.display = "none"
-            // controlBar.style.display = "flex";
-
-            const node = document.createElement("p");
-            const textnode = document.createTextNode("Room Id: " + currentRoomId);
-            node.appendChild(textnode);
-            currentRoomInfo.appendChild(node);
-          })
-        //})
+        setupLocalRoomOnCreate(() => {
+          console.log("setup local complete")
+          loadingSpinner.style.display = "none"
+          const node = document.createElement("p");
+          const textnode = document.createTextNode("Room Id: " + currentRoomId);
+          node.appendChild(textnode);
+          currentRoomInfo.appendChild(node);
+        })
       }
     })
   })
@@ -172,32 +156,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 })
 
-
-// Code to enable removing and readding video - will require resending offer and answer process
-// stopSharingVideo.addEventListener("click", e => {
-//   localStream.getVideoTracks()[0].enabled =
-//   !(localStream.getVideoTracks()[0].enabled);
-//   startSharingVideo.style.display = "flex";
-//   stopSharingVideo.style.display = "none";
-// })
-
-// startSharingVideo.addEventListener("click", e => {
-//   localStream.getVideoTracks()[0].enabled =
-//   (localStream.getVideoTracks()[0].enabled);
-//   loadingSpinner.style.display = "flex"
-//   setupLocalRoomOnCreate(() => {
-//     console.log("setup local complete")
-//     loadingSpinner.style.display = "none";
-//     startSharingVideo.style.display = "none";
-//     stopSharingVideo.style.display = "flex";
-//     checkForOffersAndAnswers()
-//   })
-// })
-
-
 // Set up room you created
-function setupLocalRoomOnCreate(completion) {
-  // leaveRoomButton.disabled = false;
+const setupLocalRoomOnCreate = (completion) => {
   createRoomButton.disabled = true;
   joinRoomButton.disabled = true;
   navigator.getUserMedia = navigator.getUserMedia ||
@@ -205,20 +165,12 @@ function setupLocalRoomOnCreate(completion) {
                            navigator.mozGetUserMedia
   navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(stream => {
   localStream = stream
-  //localVideo.srcObject = stream
-  //let div_ = document.createElement('div')
-  // div_.setAttribute('id', 'videoDiv')
-  // div_.className="col-sm-6"
-  // let video_ = document.createElement('video')
   let video_ = document.getElementById("localVideo")
   video_.setAttribute('id', "localVideo")
   video_.srcObject = stream
   video_.autoplay = true
   video_.playsInline = true
   video_.controls = false
-  //var vids = document.getElementById("videos")
-  //div_.append(video_)
-  //vids.appendChild(div_)
 
   completion()
   poll = setInterval(checkForOffersAndAnswers, 5000)
@@ -226,41 +178,11 @@ function setupLocalRoomOnCreate(completion) {
 }
 
 
-// Set up room you created
-function setupLocalRoomOnJoin(completion) {
-  // leaveRoomButton.disabled = false;
-  createRoomButton.disabled = true;
-  joinRoomButton.disabled = true;
-  navigator.getUserMedia = navigator.getUserMedia ||
-                           navigator.webkitGetUserMedia ||
-                           navigator.mozGetUserMedia
-  navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(stream => {
-  localStream = stream
-  //localVideo.srcObject = stream
-  let div_ = document.createElement('div')
-  div_.setAttribute('id', 'videoDiv')
-  div_.className="col-sm-6"
-  let video_ = document.createElement('video')
-  video_.setAttribute('id', "localVideo")
-  video_.srcObject = stream
-  video_.autoplay = true
-  video_.playsInline = true
-  video_.controls = true
-  var vids = document.getElementById("videos")
-  div_.append(video_)
-  vids.appendChild(div_)
-
-  completion()
-  poll = setInterval(checkForAnswers, 5000)
- }).catch(err => console.error(`Failed to connect 1: ${err}`))
-}
-
 // Send an offer - sent by user/peer requesting to join a room 
 const sendOffer = (recipient) => {
   let loadingSpinner = document.getElementById("loadingSpinner")
   let loadingMessage = document.getElementById("loadingMessage")
   loadingMessage.innerHTML = "Joining Room.."
-  //console.log(`Sending offer to ${recipient}`)
   setupRemotePeerAndComplete(remote => {
     console.log("This is the remote " + remote)
     remote.idHex = recipient
@@ -282,84 +204,23 @@ const sendOffer = (recipient) => {
     // Poll the answers until our offer is accepted. This should have a timeout at
     // some point.
     remote.initiatorTimer = setInterval(() => {
-        ic_vid.getRoomAnswers(parseInt(currentRoomId)).then(answers => {
-          console.log("The answer is:" + answers)
-          //foundAnswer = false;
-          //if (foundAnswer == false) {
-            answers.forEach(function(answer) {
-              //console.log(answer.offer.recipient + " : " + user_id)
-              if(answer.offer.recipient.toHex() === recipient.toHex() && !remotes.includes(remote)){
-                //foundAnswer = true;
-                //var details = JSON.parse(answer.description)
-                //myAnswers.push(answer.offer.recipient.toHex())
-                clearInterval(remote.initiatorTimer) 
-                var info = answer.description
-                var details = JSON.parse(info)
-                console.log("This is the new answer:" + details.description)
-                remote.rtcPeerConnection.setRemoteDescription(details.description)
-                addRemoteIceCandidates(details.ice, remote.rtcPeerConnection)    
-                loadingSpinner.style.display = "none"  
-                clearInterval(remote.initiatorTimer) 
-                //poll = setInterval(checkForOffersAndAnswers, 5000)
-                ic_vid.removeAnswer(parseInt(currentRoomId), answer).then(result => {
-                  console.log("just removed this answer: " + result)
-                })
-                ic_vid.joinRoom(parseInt(currentRoomId), user_id).then(result => {
-                  console.log("Trying to join room:" + currentRoomId + " " + result)
-                })
-
-                // Add remote video to page
-                let div_ = document.createElement('div')
-                div_.setAttribute('id', 'videoDiv')
-                div_.className="col-sm-6"
-
-                //let videoTag = document.getElementsByTagName("video")
-                //var newWidth = width - 25
-                //var newHeight = height - 25
-                
-                var vids = document.getElementById("videos")
-                div_.append(remote.video)
-                vids.appendChild(div_)
-                console.log("append video")
-                remotes.push(remote)
-
-                // for (var vid of videoTag) {
-                //   vid.setAttribute("width", ''+newWidth+'%' )
-                //   vid.setAttribute("height", ''+newHeight+'%')
-                // }
-              }
-          })
-        //}
-      })
-    }, 1000)
-  })
-}
-
-// Send answer - when a creator of a room gets an offer, then accept it by sending an answer
-const sendAnswer = (offer) => {
-  //console.log(myOffers.includes(offer.initiator.toHex()) + " " + offer.initiator.toHex())
-  //console.log(JSON.stringify(myOffers))
-  //if(!myOffers.includes(offer.initiator.toHex())){
-    //myOffers.push(offer.initiator.toHex())
-    console.log(`sending answer to ${offer.initiator.toHex()}`);
-
-    setupRemotePeerAndComplete(remote => {
-      remote.idHex = offer.initiator.toHex()
-      
-      var details = JSON.parse(offer.description)
-      remote.rtcPeerConnection.setRemoteDescription(details.description)
-      addRemoteIceCandidates(details.ice, remote.rtcPeerConnection)
-  
-      remote.rtcPeerConnection.createAnswer().then(answer => {
-        return remote.rtcPeerConnection.setLocalDescription(answer)
-      }).then(() => {
-        remote.waitForIceDelay = setTimeout(() => {
-            console.log("about to send answer")
-            ic_vid.answerOffer(parseInt(currentRoomId), JSON.stringify({
-              ice: remote.iceCandidates,
-              description: remote.rtcPeerConnection.localDescription
-            }), offer).then(result => {
-              console.log("Result of sending answer: " + result)
+      ic_vid.getRoomAnswers(parseInt(currentRoomId)).then(answers => {
+        console.log("The answer is:" + answers)
+        answers.forEach(function(answer) {
+          if(answer.offer.recipient.toHex() === recipient.toHex() && !remotes.includes(remote)){
+            clearInterval(remote.initiatorTimer) 
+            var info = answer.description
+            var details = JSON.parse(info)
+            console.log("This is the new answer:" + details.description)
+            remote.rtcPeerConnection.setRemoteDescription(details.description)
+            addRemoteIceCandidates(details.ice, remote.rtcPeerConnection)    
+            loadingSpinner.style.display = "none"  
+            clearInterval(remote.initiatorTimer) 
+            ic_vid.removeAnswer(parseInt(currentRoomId), answer).then(result => {
+              console.log("just removed this answer: " + result)
+            })
+            ic_vid.joinRoom(parseInt(currentRoomId), user_id).then(result => {
+              console.log("Trying to join room:" + currentRoomId + " " + result)
             })
 
             // Add remote video to page
@@ -369,33 +230,65 @@ const sendAnswer = (offer) => {
             
             var vids = document.getElementById("videos")
             div_.append(remote.video)
-            lSpinner.style.display = "none"
             vids.appendChild(div_)
             console.log("append video")
-
             remotes.push(remote)
-
-        }, 2000)
-        //myAnswers.push(offer.initiator)
+          }
+        })
       })
-      .catch(e => console.log(e))
-    })
-  //}
+    }, 1000)
+  })
+}
 
+// Send answer - when a creator of a room gets an offer, then accept it by sending an answer
+const sendAnswer = (offer) => {
+  console.log(`sending answer to ${offer.initiator.toHex()}`);
+  setupRemotePeerAndComplete(remote => {
+    remote.idHex = offer.initiator.toHex()
+      
+    var details = JSON.parse(offer.description)
+    remote.rtcPeerConnection.setRemoteDescription(details.description)
+    addRemoteIceCandidates(details.ice, remote.rtcPeerConnection)
+  
+    remote.rtcPeerConnection.createAnswer().then(answer => {
+      return remote.rtcPeerConnection.setLocalDescription(answer)
+    }).then(() => {
+      remote.waitForIceDelay = setTimeout(() => {
+        console.log("about to send answer")
+        ic_vid.answerOffer(parseInt(currentRoomId), JSON.stringify({
+          ice: remote.iceCandidates,
+          description: remote.rtcPeerConnection.localDescription
+        }), offer).then(result => {
+          console.log("Result of sending answer: " + result)
+        })
+
+        // Add remote video to page
+        let div_ = document.createElement('div')
+        div_.setAttribute('id', 'videoDiv')
+        div_.className="col-sm-6"
+        
+        var vids = document.getElementById("videos")
+        div_.append(remote.video)
+        lSpinner.style.display = "none"
+        vids.appendChild(div_)
+        console.log("append video")
+
+        remotes.push(remote)
+
+      }, 2000)
+    })
+      .catch(e => console.log(e))
+  })
 }
 
 // Check whether there are outstanding offers to join your room
-function checkForOffersAndAnswers() {
+const checkForOffersAndAnswers = () =>  {
   ic_vid.getRoomOffers(parseInt(currentRoomId)).then(offers => {
     console.log(`Found ${offers.length} offers`)
-  //const offers = ic_vid.getRoomOffers(parseInt(currentRoomId))
-
     offers.forEach(offer => {
       console.log("The offer recipient is: " + offer.recipient )
       console.log("The current user id is: " + user_id)
-      //sendAnswer(offer)
       var recipient = offer.recipient
-      //if(recipient.toHex() === user_id.toHex() && !myOffers.includes(offer.initiator.toHex())) {
       if(recipient.toHex() === user_id.toHex() && !myOffers.includes(offer.initiator.toHex())) {
         myOffers.push(offer.initiator.toHex())
         console.log("found an offer for me")
@@ -407,57 +300,18 @@ function checkForOffersAndAnswers() {
   // Check if I should be sending offers
   ic_vid?.participants(parseInt(currentRoomId)).then(participants => {
     console.log("looking through participants")
-      var p = participants[0]
-      //if(!p.includes(user_id)){
-        for (const participant of participants[0]) {
-          if(p != null && user_id != p[0].principal){
-            //if (!remotes.some(remote => remote.idHex === participant.principal.toHex()) && participant.principal.toHex() != user_id.toHex()) {
-            if (!remotes.some(remote => remote.idHex === participant.principal.toHex()) && participant.principal.toHex() != user_id.toHex() && !myAnswers.includes(participant.principal.toHex())) {
-              myAnswers.push(participant.principal.toHex())
-              console.log(" I dont have this remote participant: " + participant.principal)
-              console.log(`Sending an offer to (${participant.principal.toHex()})`)
-              //foundAnswer = false;
-              sendOffer(participant.principal)
-            }
-          }
-      //  }
-      }
-  })
-}
-
-// Check whether there are outstanding offers to join your room
-function checkForAnswers() {
-//   // Check if I should be sending offers
-//   ic_vid?.participants(parseInt(currentRoomId)).then(participants => {
-//     var p = participants[0]
-//     for (const participant of participants[0]) {
-//       if(p != null && user_id != p[0].principal){
-//         if (!remotes.some(remote => remote.idHex === participant.principal.toHex()) && participant.principal.toHex() != user_id.toHex() && !myOffers.includes(participant.principal.toHex())) {
-//           myOffers.push(participant.principal.toHex())
-//           console.log(" I dont have this remote participant: " + participant.principal)
-//           console.log(`Sending an offer to (${participant.principal.toHex()})`)
-//           sendOffer(participant.principal)
-//         }
-//       }
-//     }
-// })
-
-  // Check if I should be sending offers
-  ic_vid?.participants(parseInt(currentRoomId)).then(participants => {
     var p = participants[0]
     for (const participant of participants[0]) {
       if(p != null && user_id != p[0].principal){
-        //if (!remotes.some(remote => remote.idHex === participant.principal.toHex()) && participant.principal.toHex() != user_id.toHex()) {
         if (!remotes.some(remote => remote.idHex === participant.principal.toHex()) && participant.principal.toHex() != user_id.toHex() && !myAnswers.includes(participant.principal.toHex())) {
           myAnswers.push(participant.principal.toHex())
           console.log(" I dont have this remote participant: " + participant.principal)
           console.log(`Sending an offer to (${participant.principal.toHex()})`)
-          //foundAnswer = false;
           sendOffer(participant.principal)
         }
       }
     }
-})
+  })
 }
 
 
@@ -470,31 +324,15 @@ const setupRemotePeerAndComplete = (completion) => {
     stream: new MediaStream(),
     label: document.createElement("span"),
     idHex: '',
-
     initiatorTimer: null,
     waitForIceDelay: null
   }
 
-  //let outer_div = document.createElement('div')
-  //outer_div.setAttribute('id', roomInt)
-  // let div_ = document.createElement('div')
-  // div_.setAttribute('id', 'videoDiv')
-  // div_.className="col-sm-6"
   lSpinner.style.display = "flex"
   remote.video.autoplay = true
   remote.video.playsInline = true
   remote.video.controls = false
   remote.video.setAttribute('id', 'remoteVideo')
-
-  // let div_ = document.createElement('div')
-  // div_.setAttribute('id', 'videoDiv')
-  // div_.className="col-sm-6"
-  
-  // var vids = document.getElementById("videos")
-  // div_.append(remote.video)
-  // vids.appendChild(div_)
-  // console.log("append video")
-
   
   remote.rtcPeerConnection.onicecandidate = event => {
     event.stopImmediatePropagation()
@@ -520,7 +358,6 @@ const setupRemotePeerAndComplete = (completion) => {
     remote.rtcPeerConnection.addTrack(track);
   }
 
-  //remotes.push(remote)
   completion(remote)
 }
 
