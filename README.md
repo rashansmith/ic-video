@@ -1,51 +1,66 @@
-# videoapp
+## Overview
+IC Video is a peer-to-peer video meeting platform service deployed on the Internet Computer Network. Currently it allows for two (2) users to video chat with each other at a time. The protocol that allows us to connect via video is WebRTC. WebRTC, (Web RealTime Communication) is a browser technology for users for communicate with each other in real time. Here is the logic behind this app:
 
-Welcome to your new videoapp project and to the internet computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+- User 1 creates a room, and a Room Id is generated.
+- User 1 can then share this room Id with user 2 
+- User 2 then requests to join the room with the specific id 
+- Behind the scenes, WebRTC creates an offer (from user 2) to user 1 (to join their room)
+- Behind the scenes, user 1 accepts the offer (from user 2)
+- Once this is done, the 2 users are able to video chat!
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
 
-To learn more before you start working with videoapp, see the following documentation available online:
-
-- [Quick Start](https://internetcomputer.org/docs/current/developer-docs/quickstart/hello10mins)
-- [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/build/install-upgrade-remove)
-- [Motoko Programming Language Guide](https://internetcomputer.org/docs/current/developer-docs/build/cdks/motoko-dfinity/motoko/)
-- [Motoko Language Quick Reference](https://internetcomputer.org/docs/current/references/motoko-ref/)
+To learn more before you start working with IC Video, see the following documentation available online:
+- [Quick Start](https://sdk.dfinity.org/docs/quickstart/quickstart-intro.html)
+- [SDK Developer Tools](https://sdk.dfinity.org/docs/developers-guide/sdk-guide.html)
+- [Motoko Programming Language Guide](https://sdk.dfinity.org/docs/language-guide/motoko.html)
+- [Motoko Language Quick Reference](https://sdk.dfinity.org/docs/language-guide/language-manual.html)
 - [JavaScript API Reference](https://erxue-5aaaa-aaaab-qaagq-cai.raw.ic0.app)
 
-If you want to start working on your project right away, you might want to try the following commands:
+## Running this project locally
 
-```bash
-cd videoapp/
-dfx help
-dfx canister --help
-```
+#### Prerequisites:
+- Dfinity SDK: https://sdk.dfinity.org/docs/download.html
+- Node/NPM: https://nodejs.org/en/download/ 
+- Motoko VSCode Extension: https://marketplace.visualstudio.com/items?itemName=dfinity-foundation.vscode-motoko
+(Note): This project was created in a linux environment
 
-## Running the project locally
+#### Instructions to run project on your machine
 
-If you want to test your project locally, you can use the following commands:
+Step 1:
+In one terminal/shell, run ```dfx start --background clean``` to start the local Internet Computer Network
 
-```bash
-# Starts the replica, running in the background
-dfx start --background
+Step 2: 
 
-# Deploys your canisters to the replica and generates your candid interface
-dfx deploy
-```
 
-Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
+In another terminal/shell, run 
+- ```npm install ```
+- Option A: 
+    - ```dfx canister create --all``` - Register unique canister identifiers in the project
+    - ```dfx build``` - Build the executable canister
+    - ```dfx canister install --all``` - Deploy the ic_video project on the local
+     network
+    - ```dfx canister install --all --mode reinstall``` if you are running it again
+- Option B: 
+    - ```dfx deploy``` - which handles the three previous steps   
 
-Additionally, if you are making frontend changes, you can start a development server with
+- Take note of the canisterId from the logs, as this will be the address for the website
 
-```bash
-npm start
-```
+Step 3:
+- View the app in your browser at ``` http://localhost:8000/?canisterId=<your_canister_id> ``` 
 
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
+- The canisterId can be found in the terminal logs of the commands from Step 2
 
-### Note on frontend environment variables
+Step 3: Tear down
+- In the very first terminal/shell  run ```dfx stop```
+- In the terminal from step 2, run ```Control + C``` to stop the app.
 
-If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
 
-- set`NODE_ENV` to `production` if you are using Webpack
-- use your own preferred method to replace `process.env.NODE_ENV` in the autogenerated declarations
-- Write your own `createActor` constructor
+#### Helpful Resources
+- Dfinity Full Stack App Session: https://www.youtube.com/watch?v=2miweY9-vZc&list=PLuhDt1vhGcrf4DgKZecU3ar_RA1cB0vUT&index=7
+- Tutorial: https://www.youtube.com/watch?v=DvlyzDZDEq4&t=901s
+- Google WebRTC Overview: https://www.youtube.com/watch?v=p2HzZkd2A40&t=1453s  
+
+
+### Error notes
+- If you are getting a "ossl-evp-unsupported error, run ```export NODE_OPTIONS=--openssl-legacy-provider```
+Source: https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported
