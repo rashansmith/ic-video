@@ -1,9 +1,8 @@
-
 ## Overview
-IC Video is a video meeting platform service deployed on the Internet Computer Network. Currently it allows for multiple users to video chat with each other at a time. The protocol that allows us to connect via video is WebRTC. WebRTC, (Web RealTime Communication) is a browser technology for users for communicate with each other in real time. Here is the logic behind this app:
+IC Video is a peer-to-peer video meeting platform service deployed on the Internet Computer Network. Currently it allows for two (2) users to video chat with each other at a time. The protocol that allows us to connect via video is WebRTC. WebRTC, (Web RealTime Communication) is a browser technology for users for communicate with each other in real time. Here is the logic behind this app:
 
 - User 1 creates a room, and a Room Id is generated.
-- User 1 can then share this room Id with user 2 (3, 4, etc)
+- User 1 can then share this room Id with user 2 
 - User 2 then requests to join the room with the specific id 
 - Behind the scenes, WebRTC creates an offer (from user 2) to user 1 (to join their room)
 - Behind the scenes, user 1 accepts the offer (from user 2)

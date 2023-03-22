@@ -1,0 +1,58 @@
+type RoomId__1 = nat;
+type RoomId = nat;
+type Participant__1 = 
+ record {
+   alias: text;
+   "principal": principal;
+ };
+type Participant = 
+ record {
+   alias: text;
+   "principal": principal;
+ };
+type MyRoom = 
+ record {
+   name: text;
+   participants: List;
+   roomId: RoomId__1;
+ };
+type MyOffer__1 = 
+ record {
+   description: text;
+   initiator: principal;
+   recipient: principal;
+   roomId: RoomId__1;
+ };
+type MyOffer = 
+ record {
+   description: text;
+   initiator: principal;
+   recipient: principal;
+   roomId: RoomId__1;
+ };
+type MyAnswer = 
+ record {
+   description: text;
+   offer: MyOffer;
+   roomId: nat;
+ };
+type List = 
+ opt record {
+       Participant__1;
+       List;
+     };
+service : {
+  answerOffer: (RoomId, text, MyOffer__1) -> (opt text);
+  createOffer: (principal, RoomId, text) -> (opt text);
+  createRoom: () -> (nat);
+  findRoom: (RoomId) -> (opt MyRoom) query;
+  getAllOffers: () -> (vec MyOffer__1) query;
+  getAllRooms: () -> (vec MyRoom) query;
+  getRoomAnswers: (RoomId) -> (vec MyAnswer) query;
+  getRoomOffers: (RoomId) -> (vec MyOffer__1) query;
+  greet: (text) -> (text) query;
+  isParticipantInRoom: (principal, RoomId) -> (bool) query;
+  joinRoom: (RoomId, principal) -> (opt text);
+  participants: (RoomId) -> (opt vec Participant) query;
+  removeAnswer: (RoomId, MyAnswer) -> (text);
+}
