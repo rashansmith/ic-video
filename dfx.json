@@ -1,19 +1,19 @@
 {
   "canisters": {
-    "ic_video_optimize": {
-      "main": "src/ic_video_optimize/main.mo",
+    "videoapp_backend": {
+      "main": "src/videoapp_backend/main.mo",
       "type": "motoko"
     },
-    "ic_video_optimize_assets": {
+    "videoapp_frontend": {
       "dependencies": [
-        "ic_video_optimize"
+        "videoapp_backend"
       ],
       "frontend": {
-        "entrypoint": "src/ic_video_optimize_assets/src/index.html"
+        "entrypoint": "src/videoapp_frontend/src/index.html"
       },
       "source": [
-        "src/ic_video_optimize_assets/assets",
-        "dist/ic_video_optimize_assets/"
+        "src/videoapp_frontend/assets",
+        "dist/videoapp_frontend/"
       ],
       "type": "assets"
     }
@@ -22,13 +22,6 @@
     "build": {
       "args": "",
       "packtool": ""
-    }
-  },
-  "dfx": "0.8.4",
-  "networks": {
-    "local": {
-      "bind": "127.0.0.1:8000",
-      "type": "ephemeral"
     }
   },
   "version": 1
